@@ -29,7 +29,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import static org.antipiracy.support.utils.AntiPiracyConstants.*;
+import static org.antipiracy.support.utils.ContentGuardConstants.*;
 
 /*
  *  TO DO: add list of known app piracy websites and append to the host file
@@ -39,12 +39,12 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
  */
-public class AntiPiracyInstallReceiver extends BroadcastReceiver {
-    private static final String TAG = "ANTI-PIRACY: Install receiver";
+public class ContentGuardInstallReceiver extends BroadcastReceiver {
+    private static final String TAG = "ContentGuard: Install receiver";
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
-        Intent notifyService = new Intent(ctx, AntiPiracyNotifyService.class);
+        Intent notifyService = new Intent(ctx, ContentGuardNotifyService.class);
         if (DEBUG) Log.i(TAG, "install check event");
         boolean displayToast = false;
 
@@ -58,7 +58,7 @@ public class AntiPiracyInstallReceiver extends BroadcastReceiver {
         for (String app : PACKAGES) {
             if (DEBUG) Log.e(TAG, "PACKAGE " + app + " testing for install");
             if (isInstalled(ctx, app)) {
-                if (!isServiceRunning(AntiPiracyNotifyService.class, ctx)) {
+                if (!isServiceRunning(ContentGuardNotifyService.class, ctx)) {
                     ctx.startService(notifyService);
                     displayToast = true;
                 }
@@ -67,7 +67,7 @@ public class AntiPiracyInstallReceiver extends BroadcastReceiver {
         }
         
         if (displayToast) {
-			Toast.makeText(ctx, "Anti-piracy software activated", Toast.LENGTH_LONG).show();
+			Toast.makeText(ctx, "ContentGuard content detected: activating", Toast.LENGTH_LONG).show();
 		}
     }
 

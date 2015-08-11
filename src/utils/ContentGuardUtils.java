@@ -24,18 +24,18 @@ import android.util.Log;
 
 import java.lang.reflect.Method;
 
-import static org.antipiracy.support.utils.AntiPiracyConstants.*;
+import static org.antipiracy.support.utils.ContentGuardConstants.*;
 
 /** This service blocks the install of known piracy/malware apps. Please report new piracy
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
  */
-public class AntiPiracyUtils {
-    static final String TAG = "ANTI-PIRACY: Utilities";
+public class ContentGuardUtils {
+    static final String TAG = "ContentGuard: Utilities";
 
     private static PackageDeleteObserver sPDO;
 
-    private AntiPiracyUtils() {
+    private ContentGuardUtils() {
         sPDO = getPackageDeleteObserver();
     }
 

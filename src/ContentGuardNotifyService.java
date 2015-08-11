@@ -32,24 +32,24 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antipiracy.support.utils.AntiPiracyUtils;
-import org.antipiracy.support.utils.AntiPiracyUtils.PackageDeleteObserver;
+import org.antipiracy.support.utils.ContentGuardUtils;
+import org.antipiracy.support.utils.ContentGuardUtils.PackageDeleteObserver;
 
-import static org.antipiracy.support.utils.AntiPiracyConstants.*;
+import static org.antipiracy.support.utils.ContentGuardConstants.*;
 
 /** This service blocks the install of known piracy/malware apps. Please report new piracy
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
  */
-public class AntiPiracyNotifyService extends Service {
-    static final String TAG = "ANTI-PIRACY: Notify service";
+public class ContentGuardNotifyService extends Service {
+    static final String TAG = "ContentGuard: Notify service";
 
     // Notify service handler
     EventHandler mHandler = new EventHandler();
     static final int MSG_UNINSTALL = 100;
     static final int MSG_FINISH = 101;
 
-    AntiPiracyUtils.PackageDeleteObserver mObserverDelete;
+    ContentGuardUtils.PackageDeleteObserver mObserverDelete;
     Method mUninstallMethod;
     PackageManager mPm;
 
@@ -60,10 +60,10 @@ public class AntiPiracyNotifyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mPm = this.getPackageManager();
-        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+        mObserverDelete = ContentGuardUtils.getPackageDeleteObserver();
 
         try {
-            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+            mUninstallMethod = ContentGuardUtils.getUninstallTypes(mPm);
         } catch (NoSuchMethodException WTF) {
             Log.e(TAG, "NoSuchMethodException" + WTF);
             // Unfortunately, we're finished without this

@@ -20,7 +20,7 @@ package org.antipiracy.support.utils;
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
  */
-public class AntiPiracyConstants {
+public class ContentGuardConstants {
     public static final boolean DEBUG = false;
 
     public static final String[] PACKAGES = {
