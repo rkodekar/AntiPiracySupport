@@ -49,9 +49,15 @@ public class AntiPiracyInstallReceiver extends BroadcastReceiver {
         boolean displayToast = false;
 
         for (String app : PACKAGES) {
+			if (DEBUG) Log.e(TAG, "PACKAGE " + app + " testing for install");
+			if (isInstalled(ctx, app)) {
+                Log.i("(╯°□°)╯︵ ┻━┻", "Blacklisted packages found: " + app);
+			}
+		}
+
+        for (String app : PACKAGES) {
             if (DEBUG) Log.e(TAG, "PACKAGE " + app + " testing for install");
             if (isInstalled(ctx, app)) {
-                Log.i("(╯°□°)╯︵ ┻━┻", "Blacklisted packages found: " + app);
                 if (!isServiceRunning(AntiPiracyNotifyService.class, ctx)) {
                     ctx.startService(notifyService);
                     displayToast = true;
