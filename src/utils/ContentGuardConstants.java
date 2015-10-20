@@ -16,17 +16,22 @@
 
 package org.antipiracy.support.utils;
 
-/** A constants class list for known piracy apps. Please report new piracy
+/** A constants class list for known piracy and malware apps. Please report new piracy and malware
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
+ * @author Alex Naidis - alex.naidis@linux.com
  */
 public class ContentGuardConstants {
     public static final boolean DEBUG = false;
 
-    public static final String[] PACKAGES = {
+        public static final String[] PACKAGES = {
         // Package names                                       // App names
+        
+                                         //Anti Piracy:
+
         "com.dimonvideo.luckypatcher",                         // Lucky patcher
         "com.chelpus.lackypatch",                              // Another lucky patcher
+        "com.forpda.lp",                                       // And another one
         "com.blackmartalpha",                                  // Black Mart alpha
         "org.blackmart.market",                                // Black Mart
         "com.android.vending.billing.InAppBillingService.LUCK",// Lucky patcher 5.6.8
@@ -38,5 +43,10 @@ public class ContentGuardConstants {
         "com.zmapp",                                           // Z market
         "com.dv.marketmod.installer",                          // Hacked play store that gives refunds without uninstalling the apk
         "org.mobilism.android"                                 // Mobilism market
-    };
-}
+        
+                                         //Anti Malware:
+
+        "com.android.wp.net.log"                                 // Ghost Push Trojan: Timeservice
+        "com.android.camera.update"                              // Ghost Push Trojan infected
+     };
+ }
