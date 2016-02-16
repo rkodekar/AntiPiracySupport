@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
@@ -110,7 +111,7 @@ public class AntiPiracyNotifyService extends Service {
         this.stopSelf();
     }
 
-    private boolean isInstalled(final String packageName) {
+    private boolean isInstalled(@NonNull final String packageName) {
         String mVersion;
         try {
             mVersion = mPm.getPackageInfo(packageName, 0).versionName;
