@@ -45,7 +45,7 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
  * Note: the current source can be found in github.com/ContentGuard
  */
 public class AntiPiracyNotifyService extends Service {
-    static final String TAG = "ANTI-PIRACY: Notify service";
+    static final String TAG = "ContentGuard: Notify service";
 
     // Notify service handler
     EventHandler mHandler = new EventHandler();
@@ -96,10 +96,12 @@ public class AntiPiracyNotifyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_FINISH);
             mHandler = null;
         }
+        
         this.stopSelf();
     }
 
@@ -108,11 +110,13 @@ public class AntiPiracyNotifyService extends Service {
             mHandler.sendEmptyMessage(MSG_FINISH);
             mHandler = null;
         }
+        
         this.stopSelf();
     }
 
-    private boolean isInstalled(@NonNull final String packageName) {
+    private boolean isInstalled(@NonNull String packageName) {
         String mVersion;
+        
         try {
             mVersion = mPm.getPackageInfo(packageName, 0).versionName;
             if (mVersion.equals(null)) {
@@ -122,11 +126,13 @@ public class AntiPiracyNotifyService extends Service {
             if (DEBUG) Log.e(TAG, "Package " + packageName + " NameNotFoundException" + e);
             return false;
         }
+        
         return true;
     }
 
     private class EventHandler extends Handler {
         public void handleMessage(Message m) {
+        
             switch (m.what) {
                 case MSG_UNINSTALL:
                     // uninstall
@@ -138,9 +144,11 @@ public class AntiPiracyNotifyService extends Service {
                         Log.e(TAG, "InvocationTargetException" + BBQ);
                     }
                     break;
+                    
                 case MSG_FINISH:
                     this.removeMessages(0);
                     break;
+                    
                 default:
                     break;
             }

@@ -33,7 +33,7 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
  * Note: the current source can be found in github.com/ContentGuard
  */
 public class AntiPiracyUtils {
-    static final String TAG = "ANTI-PIRACY: Utilities";
+    static final String TAG = "ContentGuard: Utilities";
 
     private static PackageDeleteObserver sPDO;
 
