@@ -17,6 +17,7 @@
 package org.antipiracy.support.utils;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -47,7 +49,6 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
 public class Utils {
 	private static final String TAG = Utils.class.getCanonicalName();
 	
-	// Notify service handler
     static EventHandler mHandler = new EventHandler();
     static final int MSG_UNINSTALL = 100;
     static final int MSG_DISABLE = 101;
@@ -58,116 +59,14 @@ public class Utils {
     static PackageManager mPm;
     
     static List<String> mInstalledList = new ArrayList<String>();
-    
-    private static boolean isInstalled(@NonNull final String packageName) {
-        String mVersion;
-        try {
-            mVersion = mPm.getPackageInfo(packageName, 0).versionName;
-            if (mVersion.equals(null)) {
-                return false;
-            }
-        } catch (NameNotFoundException e) {
-            if (DEBUG) Log.e(TAG, "Package " + packageName + " NameNotFoundException" + e);
-            return false;
-        }
-        return true;
-    }
-    
-    public static void uninstallConfiguration(Context context) {
-    	mInstalledList.clear();
-        mPm = context.getPackageManager();
-        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
 
-        try {
-            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
-        } catch (NoSuchMethodException WTF) {
-            Log.e(TAG, "NoSuchMethodException" + WTF);
-            // Unfortunately, we're finished without this
-            shutdown();
-            return;
-        }
-
-        String[] packageNames = PACKAGES;
-        for (String app : packageNames) {
-            if (isInstalled(app)) {
-                mInstalledList.add(app);
-            }
-        }
-
-        mHandler.sendEmptyMessage(MSG_UNINSTALL);
-	}
-	
-	public static void disableConfiguration(Context context) {
-		mInstalledList.clear();
-		mPm = context.getPackageManager();
-        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
-
-        try {
-            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
-        } catch (NoSuchMethodException WTF) {
-            Log.e(TAG, "NoSuchMethodException" + WTF);
-            // Unfortunately, we're finished without this
-            shutdown();
-            return;
-        }
-
-        String[] packageNames = PACKAGES;
-        for (String app : packageNames) {
-            if (isInstalled(app)) {
-                mInstalledList.add(app);
-            }
-        }
-
-        mHandler.sendEmptyMessage(MSG_DISABLE);
-	}
-	
-	public static void uninstallTarget(Context context, @NonNull String targetPackage) {
-		mInstalledList.clear();
-		mPm = context.getPackageManager();
-        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
-
-        try {
-            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
-        } catch (NoSuchMethodException WTF) {
-            Log.e(TAG, "NoSuchMethodException" + WTF);
-            // Unfortunately, we're finished without this
-            shutdown();
-            return;
-        }
-
-		if (isInstalled(targetPackage) {
-        	mInstalledList.add(targetPackage);
-        }
-
-        mHandler.sendEmptyMessage(MSG_UNINSTALL);
-	}
-	
-	public static void disableTarget(Context context, @NonNull String targetPackage) {
-		mInstalledList.clear();
-		mPm = context.getPackageManager();
-        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
-
-        try {
-            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
-        } catch (NoSuchMethodException WTF) {
-            Log.e(TAG, "NoSuchMethodException" + WTF);
-            // Unfortunately, we're finished without this
-            shutdown();
-            return;
-        }
-
-        if (isInstalled(targetPackage) {
-        	mInstalledList.add(targetPackage);
-        }
-
-        mHandler.sendEmptyMessage(MSG_DISABLE);
-    }
+    // begin private region
 
     private class EventHandler extends Handler {
         public void handleMessage(Message m) {
             switch (m.what) {
+                // uninstall
                 case MSG_UNINSTALL:
-                    // uninstall
                     try {
                         uninstallPackages();
                     } catch (IllegalAccessException WTF) {
@@ -176,6 +75,8 @@ public class Utils {
                         Log.e(TAG, "InvocationTargetException" + BBQ);
                     }
                     break;
+                    
+                // disable
                 case MSG_DISABLE:
                     try {
                         disablePackages() {
@@ -183,9 +84,12 @@ public class Utils {
                     	e.printStackTrace();
                     }
                     break;
+                    
+                // finish
                 case MSG_FINISH:
                     this.removeMessages(0);
                     break;
+                    
                 default:
                     break;
             }
@@ -231,5 +135,149 @@ public class Utils {
             mHandler.sendEmptyMessage(MSG_FINISH);
             mHandler = null;
         }
+    }
+ 
+   /**
+    * @param String packageName - package name to check
+    * @param boolean disableNonMarket - if this is activated because of restricted content we should disable non-market app
+    * installation here to increase the inconvenience for piraters.
+    * @return true if the package name we're checking is installed
+    */
+   private static boolean isInstalled(@NonNull final String packageName, boolean disableNonMarket) {
+        String mVersion;
+        try {
+            mVersion = mPm.getPackageInfo(packageName, 0).versionName;
+            if (mVersion.equals(null)) {
+                return false;
+            }
+        } catch (NameNotFoundException e) {
+            if (DEBUG) Log.e(TAG, "Package " + packageName + " NameNotFoundException" + e);
+            return false;
+        }
+        
+        // Change the system setting to disable non-market app installs.  This isn't
+        // a measure of security as much as it is to increase the inconvenience factor
+        if (disableNonMarket) {
+        	Settings.Global.putInt(ctx.getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS, 0);
+        }
+        
+        return true;
+    }
+    
+    // end private region. begin public region.
+    
+    /**
+     * Check for and uninstall blacklisted packages
+     * @param Context context
+     * @param boolean disableNonMarket - if this is because of restricted content we need to
+     * disable non-market apps here to increase inconvenience
+     */
+    public static void uninstallConfiguration(Context context, boolean disableNonMarket) {
+    	mInstalledList.clear();
+        mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
+        try {
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
+        }
+
+        String[] packageNames = PACKAGES;
+        for (String app : packageNames) {
+            if (isInstalled(app, disableNonMarket)) {
+                mInstalledList.add(app);
+            }
+        }
+
+        mHandler.sendEmptyMessage(MSG_UNINSTALL);
+	}
+	
+	/**
+	 * Check for and disable blacklisted packages
+     * @param Context context
+     * @param boolean disableNonMarket - if this is because of restricted content we need to
+     * disable non-market apps here to increase inconvenience
+     */
+	public static void disableConfiguration(Context context, boolean disableNonMarket) {
+		mInstalledList.clear();
+		mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
+        try {
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
+        }
+
+        String[] packageNames = PACKAGES;
+        for (String app : packageNames) {
+            if (isInstalled(app, disableNonMarket)) {
+                mInstalledList.add(app);
+            }
+        }
+
+        mHandler.sendEmptyMessage(MSG_DISABLE);
+	}
+	
+	/**
+	 * Manually check for and uninstall and individual package
+     * @param Context context
+     * @param String targetPackage - check for and uninstall this package
+     * @param boolean disableNonMarket - if this is because of restricted content we need to
+     * disable non-market apps here to increase inconvenience
+     */
+	public static void uninstallTarget(Context context, @NonNull String targetPackage, boolean disableNonMarket) {
+		mInstalledList.clear();
+		mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
+        try {
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
+        }
+
+		if (isInstalled(targetPackage, disableNonMarket) {
+        	mInstalledList.add(targetPackage);
+        }
+
+        mHandler.sendEmptyMessage(MSG_UNINSTALL);
+	}
+	
+	/**
+     * @param Context context
+     * @param String targetPackage - check for and disable this package
+     * @param boolean disableNonMarket - if this is because of restricted content we need to
+     * disable non-market apps here to increase inconvenience
+     */
+	public static void disableTarget(Context context, @NonNull String targetPackage, boolean disableNonMarket) {
+		mInstalledList.clear();
+		mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
+        try {
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
+        }
+
+        if (isInstalled(targetPackage, disableNonMarket) {
+        	mInstalledList.add(targetPackage);
+        }
+
+        mHandler.sendEmptyMessage(MSG_DISABLE);
     }
 }
