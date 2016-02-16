@@ -31,13 +31,11 @@ import android.widget.Toast;
 
 import static org.antipiracy.support.utils.AntiPiracyConstants.*;
 
-/*
- *  TO DO: add list of known app piracy websites and append to the host file
- */
-
-/** This service blocks the install of known piracy/malware apps. Please report new piracy
+/** 
+ * This service blocks the install of known piracy/malware apps. Please report new piracy
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
+ * Note: the current source can be found in github.com/ContentGuard
  */
 public class AntiPiracyInstallReceiver extends BroadcastReceiver {
     private static final String TAG = "ANTI-PIRACY: Install receiver";

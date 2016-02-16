@@ -37,9 +37,11 @@ import org.antipiracy.support.utils.AntiPiracyUtils.PackageDeleteObserver;
 
 import static org.antipiracy.support.utils.AntiPiracyConstants.*;
 
-/** This service blocks the install of known piracy/malware apps. Please report new piracy
+/** 
+ * This service blocks the install of known piracy/malware apps. Please report new piracy
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
+ * Note: the current source can be found in github.com/ContentGuard
  */
 public class Utils {
 	private static final String TAG = Utils.class.getCanonicalName();
@@ -56,7 +58,22 @@ public class Utils {
     
     static List<String> mInstalledList = new ArrayList<String>();
     
+    private static boolean isInstalled(@NonNull final String packageName) {
+        String mVersion;
+        try {
+            mVersion = mPm.getPackageInfo(packageName, 0).versionName;
+            if (mVersion.equals(null)) {
+                return false;
+            }
+        } catch (NameNotFoundException e) {
+            if (DEBUG) Log.e(TAG, "Package " + packageName + " NameNotFoundException" + e);
+            return false;
+        }
+        return true;
+    }
+    
     public static void uninstallConfiguration(Context context) {
+    	mInstalledList.clear();
         mPm = context.getPackageManager();
         mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
 
@@ -80,6 +97,7 @@ public class Utils {
 	}
 	
 	public static void disableConfiguration(Context context) {
+		mInstalledList.clear();
 		mPm = context.getPackageManager();
         mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
 
@@ -102,18 +120,46 @@ public class Utils {
         mHandler.sendEmptyMessage(MSG_DISABLE);
 	}
 	
-	private static boolean isInstalled(final String packageName) {
-        String mVersion;
+	public static void uninstallTarget(Context context, @NonNull String targetPackage) {
+		mInstalledList.clear();
+		mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
         try {
-            mVersion = mPm.getPackageInfo(packageName, 0).versionName;
-            if (mVersion.equals(null)) {
-                return false;
-            }
-        } catch (NameNotFoundException e) {
-            if (DEBUG) Log.e(TAG, "Package " + packageName + " NameNotFoundException" + e);
-            return false;
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
         }
-        return true;
+
+		if (isInstalled(targetPackage) {
+        	mInstalledList.add(targetPackage);
+        }
+
+        mHandler.sendEmptyMessage(MSG_UNINSTALL);
+	}
+	
+	public static void disableTarget(Context context, @NonNull String targetPackage) {
+		mInstalledList.clear();
+		mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
+        try {
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
+        }
+
+        if (isInstalled(targetPackage) {
+        	mInstalledList.add(targetPackage);
+        }
+
+        mHandler.sendEmptyMessage(MSG_DISABLE);
     }
 
     private class EventHandler extends Handler {

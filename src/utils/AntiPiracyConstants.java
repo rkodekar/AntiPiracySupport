@@ -16,10 +16,11 @@
 
 package org.antipiracy.support.utils;
 
-/** A constants class list for known piracy and malware apps. Please report new piracy and malware
+/** 
+ * This service blocks the install of known piracy/malware apps. Please report new piracy
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
- * @author Alex Naidis - alex.naidis@linux.com
+ * Note: the current source can be found in github.com/ContentGuard
  */
 public class AntiPiracyConstants {
     public static final boolean DEBUG = false;
