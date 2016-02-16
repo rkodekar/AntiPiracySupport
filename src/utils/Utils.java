@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.antipiracy.support;
+package org.antipiracy.support.utils;
 
 import android.app.Service;
 import android.content.Context;
@@ -41,25 +41,23 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
  * apps to ROM developers deploying this code.
  * @author github.com/AlmightyMegadeth00 - activethrasher00@gmail.com
  */
-public class AntiPiracyNotifyService extends Service {
-    static final String TAG = "ANTI-PIRACY: Notify service";
-
-    // Notify service handler
-    EventHandler mHandler = new EventHandler();
+public class Utils {
+	private static final String TAG = Utils.class.getCanonicalName();
+	
+	// Notify service handler
+    static EventHandler mHandler = new EventHandler();
     static final int MSG_UNINSTALL = 100;
-    static final int MSG_FINISH = 101;
+    static final int MSG_DISABLE = 101;
+    static final int MSG_FINISH = 102;
 
-    AntiPiracyUtils.PackageDeleteObserver mObserverDelete;
-    Method mUninstallMethod;
-    PackageManager mPm;
-
-    volatile boolean _init = false;
-
-    List<String> mInstalledList = new ArrayList<String>();
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mPm = this.getPackageManager();
+    static AntiPiracyUtils.PackageDeleteObserver mObserverDelete;
+    static Method mUninstallMethod;
+    static PackageManager mPm;
+    
+    static List<String> mInstalledList = new ArrayList<String>();
+    
+    public static void uninstallConfiguration(Context context) {
+        mPm = context.getPackageManager();
         mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
 
         try {
@@ -78,37 +76,33 @@ public class AntiPiracyNotifyService extends Service {
             }
         }
 
-        if (!_init) {
-            mHandler.sendEmptyMessage(MSG_UNINSTALL);
-            _init = true;
+        mHandler.sendEmptyMessage(MSG_UNINSTALL);
+	}
+	
+	public static void disableConfiguration(Context context) {
+		mPm = context.getPackageManager();
+        mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
+
+        try {
+            mUninstallMethod = AntiPiracyUtils.getUninstallTypes(mPm);
+        } catch (NoSuchMethodException WTF) {
+            Log.e(TAG, "NoSuchMethodException" + WTF);
+            // Unfortunately, we're finished without this
+            shutdown();
+            return;
         }
-        return Service.START_REDELIVER_INTENT;
-    }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mHandler != null) {
-            mHandler.sendEmptyMessage(MSG_FINISH);
-            mHandler = null;
+        String[] packageNames = PACKAGES;
+        for (String app : packageNames) {
+            if (isInstalled(app)) {
+                mInstalledList.add(app);
+            }
         }
-        this.stopSelf();
-    }
 
-    void shutdown() {
-        if (mHandler != null) {
-            mHandler.sendEmptyMessage(MSG_FINISH);
-            mHandler = null;
-        }
-        this.stopSelf();
-    }
-
-    private boolean isInstalled(final String packageName) {
+        mHandler.sendEmptyMessage(MSG_DISABLE);
+	}
+	
+	private static boolean isInstalled(final String packageName) {
         String mVersion;
         try {
             mVersion = mPm.getPackageInfo(packageName, 0).versionName;
@@ -135,11 +129,22 @@ public class AntiPiracyNotifyService extends Service {
                         Log.e(TAG, "InvocationTargetException" + BBQ);
                     }
                     break;
+                case MSG_DISABLE:
+                    
                 case MSG_FINISH:
                     this.removeMessages(0);
                     break;
                 default:
                     break;
+            }
+        }
+        
+        private synchronized void disablePackages() {
+            String[] packageNames = new String[mInstalledList.size()];
+            packageNames = mInstalledList.toArray(packageNames);
+
+            for (String app : packageNames) {
+                mPm.setApplicationEnabledSetting(app, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
             }
         }
 
@@ -168,5 +173,11 @@ public class AntiPiracyNotifyService extends Service {
             shutdown();
         }
     }
+    
+    void shutdown() {
+        if (mHandler != null) {
+            mHandler.sendEmptyMessage(MSG_FINISH);
+            mHandler = null;
+        }
+    }
 }
-

@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
-# leaving the makefile emtpy to prevent the build
-# system from traversing the project
-
-# Built as part of the Settings package
-
+include $(CLEAR_VARS)
+LOCAL_MODULE := org.contentguard.support
+LOCAL_SDK_VERSION := 21
+LOCAL_SRC_FILES := $(call all-java-files-under, src)
+include $(BUILD_STATIC_JAVA_LIBRARY)
