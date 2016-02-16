@@ -176,7 +176,12 @@ public class Utils {
                     }
                     break;
                 case MSG_DISABLE:
-                    
+                    try {
+                        disablePackages() {
+                    } catch (Exception e) {
+                    	e.printStackTrace();
+                    }
+                    break;
                 case MSG_FINISH:
                     this.removeMessages(0);
                     break;

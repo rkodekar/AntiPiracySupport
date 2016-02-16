@@ -23,13 +23,16 @@ package org.antipiracy.support.utils;
  * Note: the current source can be found in github.com/ContentGuard
  */
 public class AntiPiracyConstants {
-    public static final boolean DEBUG = false;
 
-        public static final String[] PACKAGES = {
+	/**
+     * Blacklist by application:
+     * This list is likely to give false-positives if not used properly... this will be optional within user
+     * settings.
+     */
+    public static final String[] PACKAGES = {
+    
+        //Anti Piracy inclusions:
         // Package names                                       // App names
-
-                                         //Anti Piracy:
-
         "com.dimonvideo.luckypatcher",                         // Lucky patcher
         "com.chelpus.lackypatch",                              // Another lucky patcher
         "com.forpda.lp",                                       // And another one
@@ -45,10 +48,20 @@ public class AntiPiracyConstants {
         "com.dv.marketmod.installer",                          // Hacked play store that gives refunds without uninstalling the apk
         "org.mobilism.android",                                // Mobilism market
 
-                                         //Anti Malware:
-
+        //Anti Malware inclustions:
         "com.android.wp.net.log",                                // Ghost Push Trojan: Timeservice
         "com.android.camera.update"                              // Ghost Push Trojan infected
 
-     };
- }
+    };
+
+    /**
+     * Blacklist by application:
+     * This list is likely to give false-positives if not used properly... this will be optional within user
+     * settings.
+     * TODO: evaluate with case insensitivity
+     */
+    public static final String[] APPLICATION_NAMES = {
+        "Luck Patcher",
+        "Black Mart",
+        "Black Mart alpha"
+    }
