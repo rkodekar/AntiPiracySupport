@@ -49,7 +49,7 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
 public class Utils {
 	private static final String TAG = Utils.class.getCanonicalName();
 	
-    static EventHandler mHandler = new EventHandler();
+    static EventHandler mHandler;
     static final int MSG_UNINSTALL = 100;
     static final int MSG_DISABLE = 101;
     static final int MSG_FINISH = 102;
@@ -59,6 +59,10 @@ public class Utils {
     static PackageManager mPm;
     
     static List<String> mInstalledList = new ArrayList<String>();
+
+    public Utils() {
+		mHandler = new EventHandler();
+	}
 
     // begin private region
 
@@ -79,7 +83,7 @@ public class Utils {
                 // disable
                 case MSG_DISABLE:
                     try {
-                        disablePackages() {
+                        disablePackages();
                     } catch (Exception e) {
                     	e.printStackTrace();
                     }
@@ -130,7 +134,7 @@ public class Utils {
         }
     }
     
-    void shutdown() {
+    static void shutdown() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_FINISH);
             mHandler = null;
@@ -143,7 +147,7 @@ public class Utils {
     * installation here to increase the inconvenience for piraters.
     * @return true if the package name we're checking is installed
     */
-   private static boolean isInstalled(@NonNull final String packageName, boolean disableNonMarket) {
+   private static boolean isInstalled(Context ctx, @NonNull String packageName, boolean disableNonMarket) {
         String mVersion;
         try {
             mVersion = mPm.getPackageInfo(packageName, 0).versionName;
@@ -188,7 +192,7 @@ public class Utils {
 
         String[] packageNames = PACKAGES;
         for (String app : packageNames) {
-            if (isInstalled(app, disableNonMarket)) {
+            if (isInstalled(context, app, disableNonMarket)) {
                 mInstalledList.add(app);
             }
         }
@@ -218,7 +222,7 @@ public class Utils {
 
         String[] packageNames = PACKAGES;
         for (String app : packageNames) {
-            if (isInstalled(app, disableNonMarket)) {
+            if (isInstalled(context, app, disableNonMarket)) {
                 mInstalledList.add(app);
             }
         }
@@ -247,7 +251,7 @@ public class Utils {
             return;
         }
 
-		if (isInstalled(targetPackage, disableNonMarket) {
+		if (isInstalled(context, targetPackage, disableNonMarket)) {
         	mInstalledList.add(targetPackage);
         }
 
@@ -274,7 +278,7 @@ public class Utils {
             return;
         }
 
-        if (isInstalled(targetPackage, disableNonMarket) {
+        if (isInstalled(context, targetPackage, disableNonMarket)) {
         	mInstalledList.add(targetPackage);
         }
 

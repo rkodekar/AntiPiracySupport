@@ -71,7 +71,7 @@ public class AntiPiracyNotifyService extends Service {
             Log.e(TAG, "NoSuchMethodException" + WTF);
             // Unfortunately, we're finished without this
             shutdown();
-            return;
+            return Service.START_REDELIVER_INTENT;
         }
 
         String[] packageNames = PACKAGES;

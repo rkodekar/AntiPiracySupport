@@ -42,13 +42,19 @@ import static org.antipiracy.support.utils.AntiPiracyConstants.*;
 public class AntiPiracyInstallReceiver extends BroadcastReceiver {
     private static final String TAG = "ContentGuard: Install receiver";
 
+	static {
+		System.loadLibrary("libcontentguard");
+	}
+	
+	private native String[] getConstants();
+
     @Override
     public void onReceive(Context ctx, Intent intent) {
         Intent notifyService = new Intent(ctx, AntiPiracyNotifyService.class);
         if (DEBUG) Log.i(TAG, "install check event");
         boolean displayToast = false;
 
-        for (String app : PACKAGES) {
+        for (String app : getConstants()) {
             if (DEBUG) Log.e(TAG, "PACKAGE " + app + " testing for install");
             
             if (isInstalled(ctx, app)) {

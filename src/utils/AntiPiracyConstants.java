@@ -23,6 +23,7 @@ package org.antipiracy.support.utils;
  * Note: the current source can be found in github.com/ContentGuard
  */
 public class AntiPiracyConstants {
+	public static final boolean DEBUG = false;
 
 	/**
      * Blacklist by application:
@@ -64,4 +65,5 @@ public class AntiPiracyConstants {
         "Luck Patcher",
         "Black Mart",
         "Black Mart alpha"
-    }
+    };
+}
