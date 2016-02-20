@@ -51,8 +51,9 @@ public class Utils {
 
     private static EventHandler mHandler;
     static final int MSG_UNINSTALL = 100;
-    static final int MSG_DISABLE = 101;
-    static final int MSG_FINISH = 102;
+    static final int MSG_UNINSTALL_DISABLE = 101;
+    static final int MSG_DISABLE = 102;
+    static final int MSG_FINISH = 103;
 
     static AntiPiracyUtils.PackageDeleteObserver mObserverDelete;
     static Method mUninstallMethod;
@@ -75,7 +76,17 @@ public class Utils {
                 // uninstall
                 case MSG_UNINSTALL:
                     try {
-                        uninstallPackages();
+                        uninstallPackages(false);
+                    } catch (IllegalAccessException WTF) {
+                        Log.e(TAG, "IllegalAccessException" + WTF);
+                    } catch (InvocationTargetException BBQ) {
+                        Log.e(TAG, "InvocationTargetException" + BBQ);
+                    }
+                    break;
+
+               case MSG_UNINSTALL_DISABLE:
+                    try {
+                        uninstallPackages(true);
                     } catch (IllegalAccessException WTF) {
                         Log.e(TAG, "IllegalAccessException" + WTF);
                     } catch (InvocationTargetException BBQ) {
@@ -112,14 +123,14 @@ public class Utils {
             }
         }
 
-        private synchronized void uninstallPackages() throws
+        private synchronized void uninstallPackages(boolean disableFirst) throws
                 IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
             String[] packageNames = new String[mInstalledList.size()];
             packageNames = mInstalledList.toArray(packageNames);
 
             for (String app : packageNames) {
-                mPm.setApplicationEnabledSetting(app, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+                if (disableFirst) mPm.setApplicationEnabledSetting(app, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
 
                 mUninstallMethod.invoke(mPm, new Object[] {
                     app, mObserverDelete, 0
