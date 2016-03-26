@@ -48,6 +48,9 @@ public class AntiPiracyConstants {
         "com.zmapp",                                           // Z market
         "com.dv.marketmod.installer",                          // Hacked play store that gives refunds without uninstalling the apk
         "org.mobilism.android",                                // Mobilism market
+        "com.xperia64.rompatcher",                             // ROM patcher
+        "com.xperia64.rompatcher.donate",                      // ROM patcher donate
+        "com.android.protips",                                 // Lucky patcher with fake package name
 
         //Anti Malware inclustions:
         "com.android.wp.net.log",                                // Ghost Push Trojan: Timeservice
