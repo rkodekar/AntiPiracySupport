@@ -40,6 +40,7 @@ public class AntiPiracyConstants {
         "com.blackmartalpha",                                  // Black Mart alpha
         "org.blackmart.market",                                // Black Mart
         "com.android.vending.billing.InAppBillingService.LUCK",// Lucky patcher 5.6.8
+        "com.android.vending.billing.InAppBillingService.LACK",// Lucky patcher 5.9.x and 6.0.x
         "cc.madkite.freedom",                                  // Freedom
         "com.allinone.free",                                   // All-in-one Downloader
         "com.repodroid.app",                                   // Get Apk Market
