@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -80,7 +79,7 @@ public class Utils {
     * installation here to increase the inconvenience for piraters.
     * @return true if the package name we're checking is installed
     */
-   private static boolean isInstalled(Context ctx, @NonNull String packageName, boolean disableNonMarket) {
+   private static boolean isInstalled(Context ctx, String packageName, boolean disableNonMarket) {
         String mVersion;
         try {
             mVersion = mPm.getPackageInfo(packageName, 0).versionName;
@@ -171,7 +170,7 @@ public class Utils {
      * disable non-market apps here to increase inconvenience
      * @param boolean disableBeforeUninstall - disable the app before uninstalling
      */
-    public static void uninstallTarget(Context context, @NonNull String targetPackage, boolean disableNonMarket, boolean disableBeforeUninstall) {
+    public static void uninstallTarget(Context context, String targetPackage, boolean disableNonMarket, boolean disableBeforeUninstall) {
         mInstalledList.clear();
         mPm = context.getPackageManager();
         mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
@@ -201,7 +200,7 @@ public class Utils {
      * disable non-market apps here to increase inconvenience
      * @param boolean disableBeforeUninstall - disable the app before uninstalling
      */
-    public static void uninstallTarget(Context context, @NonNull Set<String> targetPackages, boolean disableNonMarket, boolean disableBeforeUninstall) {
+    public static void uninstallTarget(Context context, Set<String> targetPackages, boolean disableNonMarket, boolean disableBeforeUninstall) {
         mInstalledList.clear();
         mPm = context.getPackageManager();
         mObserverDelete = AntiPiracyUtils.getPackageDeleteObserver();
@@ -231,7 +230,7 @@ public class Utils {
      * @param boolean disableNonMarket - if this is because of restricted content we need to
      * disable non-market apps here to increase inconvenience
      */
-    public static void disableTarget(Context context, @NonNull String targetPackage, boolean disableNonMarket) {
+    public static void disableTarget(Context context, String targetPackage, boolean disableNonMarket) {
         mInstalledList.clear();
         mPm = context.getPackageManager();
 
@@ -251,7 +250,7 @@ public class Utils {
      * @param boolean disableNonMarket - if this is because of restricted content we need to
      * disable non-market apps here to increase inconvenience
      */
-    public static void disableTarget(Context context, @NonNull Set<String> targetPackages, boolean disableNonMarket) {
+    public static void disableTarget(Context context, Set<String> targetPackages, boolean disableNonMarket) {
         mInstalledList.clear();
         mPm = context.getPackageManager();
 
