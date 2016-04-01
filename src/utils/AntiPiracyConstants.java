@@ -43,6 +43,9 @@ public class AntiPiracyConstants {
         "com.zmapp",                                           // Z market
         "com.dv.marketmod.installer",                          // Hacked play store that gives refunds without uninstalling the apk
         "org.mobilism.android",                                // Mobilism market
+        "p.jasi2169.al3",                                      //Action Launcher3 Patcher
+        "cm.aptoide.pt",                                       //Aptiode
+        "z.jasi2169.tbpatch",                                  // Titanium Bacup patcher 
 
                                          //Anti Malware:
 
